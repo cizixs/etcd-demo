@@ -11,6 +11,10 @@ import (
 	"github.com/coreos/etcd/pkg/transport"
 )
 
+const (
+	turingPrefix = "/turing-awards/"
+)
+
 // EtcdConfig stores important fileds to connect to etcd.
 // Mainly endpoints and verification related info
 type EtcdConfig struct {
@@ -62,7 +66,7 @@ func init() {
 }
 
 func setWinner(who, what string, ttl int) error {
-	key := "/turing-awards/" + who
+	key := turingPrefix + who
 	fmt.Printf("Set %s to [%s]\n", key, what)
 	_, err := client.Set(context.Background(), key, what,
 		&etcd.SetOptions{
@@ -78,7 +82,7 @@ func setWinner(who, what string, ttl int) error {
 }
 
 func getWinner(who string) error {
-	key := "/turing-awards/" + who
+	key := turingPrefix + who
 
 	resp, err := client.Get(context.Background(), key, nil)
 	if err != nil {
@@ -97,7 +101,7 @@ func getWinner(who string) error {
 }
 
 func getWinners() error {
-	key := "/turing-awards"
+	key := turingPrefix
 
 	resp, err := client.Get(context.Background(), key, nil)
 	if err != nil {
@@ -121,7 +125,7 @@ func getWinners() error {
 // updateWinner only updates winner description if you provide
 // the correct previous description
 func updateWinner(who string, prev, new string) error {
-	key := "/turing-awards/" + who
+	key := turingPrefix + who
 	fmt.Printf("Update %s to [%s]\n", key, new)
 	_, err := client.Set(context.Background(), key, new,
 		&etcd.SetOptions{
@@ -152,7 +156,7 @@ func deleteWinner(who string) error {
 // num is how many results so we can exit, we don't want to run
 // forever
 func watchWinners(num int) error {
-	key := "/turing-awards/"
+	key := turingPrefix
 	fmt.Printf("Watch all winners\n")
 
 	watcher := client.Watcher(key, &etcd.WatcherOptions{
