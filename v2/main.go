@@ -179,6 +179,17 @@ func watchWinners(num int) error {
 	}
 }
 
+func deleteAllWinners() {
+	key := turingPrefix
+	_, err := client.Delete(context.Background(), key, &etcd.DeleteOptions{
+		Recursive: true,
+		Dir:       true,
+	})
+	if err != nil {
+		fmt.Printf("delete error: %v", err)
+	}
+}
+
 func demoGetSet() {
 	err := setWinner("john-mccarthy", "Artificial Interlligence", 0)
 	if err != nil {
@@ -344,4 +355,6 @@ func main() {
 		fmt.Printf("\n------------- DEMO %d: %s --------------\n", i+1, d.description)
 		d.action()
 	}
+
+	deleteAllWinners()
 }
